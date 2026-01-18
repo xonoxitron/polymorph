@@ -17,7 +17,6 @@ categories = ["command-line-utilities", "development-tools"]
 
 [dev-dependencies]
 tempfile = "3.8"
-criterion = "0.5"
 
 [profile.release]
 opt-level = 3
@@ -29,15 +28,3 @@ panic = "abort"
 [[bin]]
 name = "polymorph"
 path = "src/main.rs"
-
-[[bench]]
-name = "scan_benchmark"
-harness = false
-
-[[example]]
-name = "basic_scan"
-path = "examples/basic_scan.rs"
-
-[[example]]
-name = "batch_scan"
-path = "examples/batch_scan.rs"

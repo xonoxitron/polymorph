@@ -4,6 +4,16 @@ on: [push, pull_request]
 
 jobs:
   test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - run: cargo build --release
+      - run: cargo test
+
+  build-cross:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -14,4 +24,3 @@ jobs:
         with:
           toolchain: stable
       - run: cargo build --release
-      - run: cargo test

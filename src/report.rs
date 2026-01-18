@@ -43,8 +43,24 @@ impl ReportGenerator {
         report.push_str(&format!("Total Detections: {}\n", self.scanner.detections.len()));
         
         if !self.scanner.detections.is_empty() {
-            let max_severity = self.scanner.detections.iter().map(|d| &d.severity).max().unwrap();
+            let max_severity = self.scanner.detections.iter()
+                .map(|d| &d.severity)
+                .max()
+                .unwrap();
             report.push_str(&format!("Maximum Severity: {:?}\n\n", max_severity));
+        }
+
+        let mut by_category = std::collections::HashMap::new();
+        for detection in &self.scanner.detections {
+            *by_category.entry(format!("{:?}", detection.category)).or_insert(0) += 1;
+        }
+
+        if !by_category.is_empty() {
+            report.push_str("Category Breakdown:\n");
+            for (cat, count) in by_category {
+                report.push_str(&format!("  {}: {} findings\n", cat, count));
+            }
+            report.push_str("\n");
         }
 
         let critical: Vec<_> = self.scanner.detections.iter()
@@ -85,7 +101,8 @@ impl ReportGenerator {
     }
 
     fn format_detection(&self, det: &Detection) -> String {
-        let mut s = format!("[{:?}] {:?}: {}\n", det.severity, det.category, det.description);
+        let mut s = format!("[{:?}] {:?}: {}\n", 
+            det.severity, det.category, det.description);
         
         if self.show_offsets {
             if let Some(offset) = det.offset {

@@ -24,7 +24,7 @@ struct Config {
 impl Config {
     fn from_args(args: Vec<String>) -> Result<Config, String> {
         if args.len() < 2 {
-            return Err("Missing file argument".to_string());
+            return Err("Missing required argument".to_string());
         }
 
         let mut file_path = String::new();
@@ -73,14 +73,17 @@ impl Config {
 
 fn print_help() {
     println!("PolyMorph v{} - Polyglot Malware Detection", VERSION);
-    println!("\nUSAGE: polymorph [OPTIONS] <FILE>");
+    println!("\nUSAGE:");
+    println!("    polymorph [OPTIONS] <FILE>");
     println!("\nOPTIONS:");
-    println!("  -h, --help       Show help");
-    println!("  -v, --verbose    Verbose output");
-    println!("  -q, --quiet      Minimal output");
-    println!("  -j, --json       JSON output");
-    println!("  -o, --offsets    Show offsets");
-    println!("  -V, --version    Show version");
+    println!("    -h, --help       Show this help");
+    println!("    -v, --verbose    Verbose output");
+    println!("    -q, --quiet      Minimal output");
+    println!("    -j, --json       JSON output");
+    println!("    -o, --offsets    Show offsets");
+    println!("    -V, --version    Show version");
+    println!("\nEXIT CODES:");
+    println!("    0 - Clean, 1 - Low, 2 - Medium, 3 - High, 4 - Critical, 5 - Error");
 }
 
 fn main() {

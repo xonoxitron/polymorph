@@ -1,9 +1,29 @@
-# WASM Detection
+# WebAssembly Malware Detection
 
-Detects:
+## Overview
+
+PolyMorph detects WASM-based threats including cryptominers and obfuscated malware.
+
+## Detection Capabilities
+
 - Binary format validation
-- Cryptomining (hash functions, GPU)
-- Suspicious imports (network, crypto)
-- Obfuscation
+- Cryptomining indicators (hash functions, GPU APIs)
+- Suspicious imports (network, crypto, DOM)
+- Obfuscation patterns
+- Size anomalies
 
-Known threats: Coinhive, CryptoLoot, XMRig
+## Examples
+
+```bash
+# Scan WASM file
+polymorph cryptominer.wasm
+
+# Detect Coinhive
+polymorph coinhive.wasm
+```
+
+## Known Threats
+
+- Coinhive, CryptoLoot, CoinIMP
+- XMRig-based miners
+- CryptoNight variants

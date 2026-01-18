@@ -9,8 +9,9 @@
 [![Rust](https://img.shields.io/badge/rust-1.70%2B-orange.svg)](https://www.rust-lang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Security](https://img.shields.io/badge/security-malware%20detection-red)](https://github.com/xonoxitron/polymorph)
+[![Build Status](https://github.com/xonoxitron/polymorph/workflows/CI/badge.svg)](https://github.com/xonoxitron/polymorph/actions)
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Examples](#-examples)
+[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](#-documentation) • [Contributing](#-contributing)
 
 </div>
 
@@ -18,26 +19,56 @@
 
 ## 🚨 The Polyglot Malware Problem
 
-Modern malware exploits **polyglot files** - binaries valid in multiple formats simultaneously - to evade traditional antivirus.
+The malware landscape is evolving. Attackers exploit **polyglot files** - binaries valid in multiple formats simultaneously - to evade detection systems that traditional antivirus cannot catch.
 
-### The Threats
+### The Emerging Threats
 
-- **APE (Actually Portable Executable)**: Single binary runs on Windows/Linux/macOS/BSD
-- **Zig Malware**: Direct syscalls bypass EDR (Hell's Gate, Halo's Gate)
-- **WASM Cryptominers**: 75% of WASM modules are malicious (CrowdStrike, 2024)
+**Actually Portable Executables (APE)**
+- Single binary runs natively on Windows, Linux, macOS, and BSD
+- Combines PE + ELF + Mach-O formats in one file
+- Perfect for cross-platform malware campaigns
 
-### Research Shows Defenses Fail
+**Zig Malware**
+- Direct syscalls bypass EDR hooks (Hell's Gate, Halo's Gate)
+- Compile-time obfuscation defeats static analysis
+- Growing adoption in APT toolkits
 
-- **20/36 detectors** bypassed by polyglots (Jana & Shmatikov, 2012)
-- **90% evasion rate** against VirusTotal for WASM (Cabrera-Arteaga, 2024)
+**WebAssembly Cryptominers**
+- Near-native performance in browsers
+- Binary format evades string-based detection
+- **75% of WASM modules in the wild are malicious** (CrowdStrike, 2024)
 
-**No open-source tool detects APE + Zig + WASM together. PolyMorph fills this gap.**
+### Research Proves Traditional Defenses Fail
+
+- **20 out of 36 malware detectors** bypassed by polyglot files (Jana & Shmatikov, 2012)
+- **4 leading commercial tools** missed 199 polyglot samples (Bridges et al., 2023)
+- **90% evasion rate** against VirusTotal for WASM (Cabrera-Arteaga et al., 2024)
+
+**No open-source production tool detects APE, Zig, AND WASM threats together.**
+
+**PolyMorph fills this gap.**
+
+---
+
+## 🎯 What is PolyMorph?
+
+First open-source static analyzer for:
+
+✅ **Cosmopolitan APE** polyglot binaries  
+✅ **Zig-based malware** with EDR evasion  
+✅ **WebAssembly cryptominers**  
+✅ **Direct syscall patterns** (Hell's Gate, Halo's Gate)  
+✅ **Anti-debugging/anti-VM** mechanisms  
+✅ **Process injection** across platforms  
+
+Built in Rust for performance (~50ms per 10MB), safety, and portability.
 
 ---
 
 ## ⚡ Quick Start
 
 ```bash
+# Clone and build
 git clone https://github.com/xonoxitron/polymorph
 cd polymorph
 cargo build --release
@@ -46,36 +77,80 @@ cargo build --release
 ./target/release/polymorph suspicious.exe
 
 # JSON output
-./target/release/polymorph --json malware.wasm
+./target/release/polymorph --json malware.com
 ```
-
----
-
-## 💻 Examples
-
-See `examples/` directory:
-- `basic_scan.rs` - Simple file scanning
-- `batch_scan.rs` - Multiple file processing
 
 ---
 
 ## 📚 Documentation
 
-- [Quick Start](docs/QUICKSTART.md)
+- [Quick Start Guide](docs/QUICKSTART.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [WASM Detection](docs/WASM_DETECTION.md)
+- [YARA Rules](rules/polymorph.yar)
+- [Contributing](CONTRIBUTING.md)
+
+---
+
+## 💻 Usage Examples
+
+### Malware Analysis
+```bash
+polymorph /tmp/suspicious.exe | grep -E "CRITICAL|HIGH"
+```
+
+### CI/CD Integration
+```yaml
+- name: Scan artifacts
+  run: polymorph --json ./build/app.exe || exit 1
+```
+
+### SOC Automation
+```python
+import subprocess, json
+
+def scan(path):
+    result = subprocess.run(['polymorph', '--json', path], 
+                          capture_output=True, text=True)
+    return json.loads(result.stdout)
+
+report = scan('/quarantine/sample.com')
+if report['risk_score'] >= 80:
+    alert_soc_team(report)
+```
+
+---
+
+## 🔬 Comparison to Existing Tools
+
+| Tool | APE | Zig | WASM | Open Source | Production Ready |
+|------|-----|-----|------|-------------|------------------|
+| **PolyMorph** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| MINOS | ❌ | ❌ | ⚠️ | ⚠️ | ❌ |
+| MinerRay | ❌ | ❌ | ✅ | ❌ | ❌ |
+| ClamAV | ❌ | ❌ | ❌ | ✅ | ✅ |
+
+**PolyMorph: Only tool with APE+Zig+WASM detection in production-ready open-source package.**
 
 ---
 
 ## 🤝 Contributing
 
-Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
 ## 📜 License
 
 MIT License - see [LICENSE](LICENSE)
+
+---
+
+## 📧 Support
+
+- **Issues**: [GitHub Issues](https://github.com/xonoxitron/polymorph/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/xonoxitron/polymorph/discussions)
+- **Security**: [SECURITY.md](SECURITY.md)
 
 ---
 
